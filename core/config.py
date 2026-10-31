@@ -127,3 +127,16 @@ def resolve_llm_backend(cfg: dict) -> str:
 def abs_path(cfg: dict, key: str) -> Path:
     p = Path(cfg["paths"][key])
     return p if p.is_absolute() else ROOT / p
+
+
+def data_path(cfg: dict, key: str, crust_backend: str) -> Path:
+    """Backend-aware data file: live data uses the documented names; the simulator gets a `_sim` suffix so synthetic
+    cases/answer keys can never overwrite (or be mistaken for) real ones (CLAUDE.md #14)."""
+    p = abs_path(cfg, key)
+    return p if crust_backend == "live" else p.with_name(p.stem + "_sim" + p.suffix)
+
+
+def results_dir(cfg: dict, crust_backend: str, llm_backend: str) -> Path:
+    d = abs_path(cfg, "results") / f"{crust_backend}-{llm_backend}"
+    d.mkdir(parents=True, exist_ok=True)
+    return d

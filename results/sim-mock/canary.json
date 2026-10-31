@@ -1,0 +1,265 @@
+{
+  "meta": {
+    "backends": {
+      "crust": "sim",
+      "llm": "mock"
+    },
+    "split": "train",
+    "n_cases": 28,
+    "config_hash": "f2791720c8e239d2"
+  },
+  "leak_on_vs_off": {
+    "A1_leak_on": {
+      "n": 28,
+      "pool_recall": 1.0,
+      "recall@10": {
+        "mean": 0.39285714285714285,
+        "lo": 0.21428571428571427,
+        "hi": 0.5714285714285714
+      },
+      "recall@25": {
+        "mean": 0.5357142857142857,
+        "lo": 0.35714285714285715,
+        "hi": 0.7142857142857143
+      },
+      "recall@50": {
+        "mean": 0.6071428571428571,
+        "lo": 0.42857142857142855,
+        "hi": 0.7857142857142857
+      },
+      "mrr": 0.21756174177236826
+    },
+    "A1_masked": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.07142857142857142,
+        "lo": 0.0,
+        "hi": 0.17857142857142858
+      },
+      "recall@25": {
+        "mean": 0.25,
+        "lo": 0.10714285714285714,
+        "hi": 0.39374999999999916
+      },
+      "recall@50": {
+        "mean": 0.25,
+        "lo": 0.10714285714285714,
+        "hi": 0.39374999999999916
+      },
+      "mrr": 0.03299787561174909
+    },
+    "A4_leak_on": {
+      "n": 28,
+      "pool_recall": 1.0,
+      "recall@10": {
+        "mean": 0.8928571428571429,
+        "lo": 0.7857142857142857,
+        "hi": 1.0
+      },
+      "recall@25": {
+        "mean": 1.0,
+        "lo": 1.0,
+        "hi": 1.0
+      },
+      "recall@50": {
+        "mean": 1.0,
+        "lo": 1.0,
+        "hi": 1.0
+      },
+      "mrr": 0.5555214131106988
+    },
+    "A4_masked": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.21428571428571427,
+        "lo": 0.07142857142857142,
+        "hi": 0.39285714285714285
+      },
+      "recall@25": {
+        "mean": 0.35714285714285715,
+        "lo": 0.17857142857142858,
+        "hi": 0.5357142857142857
+      },
+      "recall@50": {
+        "mean": 0.5357142857142857,
+        "lo": 0.35714285714285715,
+        "hi": 0.7142857142857143
+      },
+      "mrr": 0.1042754706664523
+    },
+    "random_baseline_recall@25": 0.07937414053508192,
+    "verdict": "Leak-on Recall@25 54% vs masked 25% (drop +29%). The leak is real and is now closed."
+  },
+  "shuffled_answers": {
+    "observed_recall@25": 0.35714285714285715,
+    "random_pseudo_hires_mean_recall@25": 0.10616071428571427,
+    "random_sd": 0.05843127558796517,
+    "analytic_baseline_recall@25": 0.104030153852354,
+    "p_observed_ge_null": 0.0,
+    "evaluator_ok": true,
+    "cross_case_swap_recall@25": 0.07142857142857142,
+    "verdict": "Evaluator is unbiased: random pseudo-hires hit the analytic baseline."
+  },
+  "spot_audit": {
+    "hires_checked": 38,
+    "failures": [],
+    "clean": true
+  },
+  "feature_auc_scan": {
+    "features": {
+      "fit.title_match": {
+        "auc_mean": 0.5157408853326807,
+        "n_cases": 22
+      },
+      "fit.seniority": {
+        "auc_mean": 0.5009059533286584,
+        "n_cases": 22
+      },
+      "fit.skills": {
+        "auc_mean": 0.4602716530002597,
+        "n_cases": 22
+      },
+      "fit.location": {
+        "auc_mean": 0.5699051673400867,
+        "n_cases": 22
+      },
+      "fit.domain": {
+        "auc_mean": 0.5155285683010874,
+        "n_cases": 22
+      },
+      "fit.text_sim": {
+        "auc_mean": 0.5459899009277489,
+        "n_cases": 22
+      },
+      "fit.llm_fit": {
+        "auc_mean": 0.4882637611327993,
+        "n_cases": 22
+      },
+      "move.p_move": {
+        "auc_mean": 0.6435889738693966,
+        "n_cases": 22
+      },
+      "move.personal": {
+        "auc_mean": 0.4790764286376984,
+        "n_cases": 22
+      },
+      "move.no_recent_promo": {
+        "auc_mean": 0.5067455847640274,
+        "n_cases": 22
+      },
+      "move.stalled": {
+        "auc_mean": 0.49310907486770467,
+        "n_cases": 22
+      },
+      "move.between_roles": {
+        "auc_mean": 0.4688642115632184,
+        "n_cases": 22
+      },
+      "conn.ex_colleague": {
+        "auc_mean": 0.8609763440944687,
+        "n_cases": 22
+      },
+      "conn.closeness": {
+        "auc_mean": 0.8933969768556325,
+        "n_cases": 22
+      },
+      "conn.feeder": {
+        "auc_mean": 0.5313752034783255,
+        "n_cases": 22
+      },
+      "conn.ppr": {
+        "auc_mean": 0.8615795202547267,
+        "n_cases": 22
+      }
+    },
+    "suspicious": {},
+    "clean": true,
+    "verdict": "no single feature separates hires from the pool (AUC <= 0.97)"
+  },
+  "undated_fields": {
+    "A1_with_skills_location_descriptions": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.07142857142857142,
+        "lo": 0.0,
+        "hi": 0.17857142857142858
+      },
+      "recall@25": {
+        "mean": 0.25,
+        "lo": 0.10714285714285714,
+        "hi": 0.39374999999999916
+      },
+      "recall@50": {
+        "mean": 0.25,
+        "lo": 0.10714285714285714,
+        "hi": 0.39374999999999916
+      },
+      "mrr": 0.03299787561174909
+    },
+    "A1_without": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.07142857142857142,
+        "lo": 0.0,
+        "hi": 0.17857142857142858
+      },
+      "recall@25": {
+        "mean": 0.14285714285714285,
+        "lo": 0.03571428571428571,
+        "hi": 0.2857142857142857
+      },
+      "recall@50": {
+        "mean": 0.32142857142857145,
+        "lo": 0.14285714285714285,
+        "hi": 0.5
+      },
+      "mrr": 0.021970060917663906
+    },
+    "A4_with_skills_location_descriptions": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.21428571428571427,
+        "lo": 0.07142857142857142,
+        "hi": 0.39285714285714285
+      },
+      "recall@25": {
+        "mean": 0.35714285714285715,
+        "lo": 0.17857142857142858,
+        "hi": 0.5357142857142857
+      },
+      "recall@50": {
+        "mean": 0.5357142857142857,
+        "lo": 0.35714285714285715,
+        "hi": 0.7142857142857143
+      },
+      "mrr": 0.1042754706664523
+    },
+    "A4_without": {
+      "n": 28,
+      "pool_recall": 0.7857142857142857,
+      "recall@10": {
+        "mean": 0.25,
+        "lo": 0.10714285714285714,
+        "hi": 0.42857142857142855
+      },
+      "recall@25": {
+        "mean": 0.5357142857142857,
+        "lo": 0.35714285714285715,
+        "hi": 0.7142857142857143
+      },
+      "recall@50": {
+        "mean": 0.6428571428571429,
+        "lo": 0.4642857142857143,
+        "hi": 0.8214285714285714
+      },
+      "mrr": 0.12374711490812888
+    },
+    "note": "Skills, profile location and role descriptions are undated (they reflect today). If recall barely moves without them, the result does not rest on them."
+  },
+  "all_clear": true
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "group": "A inputs",
+    "name": "vague brief",
+    "expected": "asks ONE clarifying question; no search",
+    "passed": true,
+    "detail": "blocked, question='Which role are you hiring for, and in which city?', credits spent=0.0",
+    "seconds": 1.4
+  },
+  {
+    "group": "A inputs",
+    "name": "mixed language + typos",
+    "expected": "Backend Engineer, Mumbai, payments",
+    "passed": true,
+    "detail": "title='Backend Engineer' location='Mumbai' domain=['payments'] via heuristic",
+    "seconds": 0.0
+  },
+  {
+    "group": "A inputs",
+    "name": "title with many names",
+    "expected": "expands to adjacent normalised titles",
+    "passed": true,
+    "detail": "title='Growth Marketer' adjacent=['growth hacker', 'data analyst', 'marketing manager', 'performance marketer', 'product manager']",
+    "seconds": 0.0
+  },
+  {
+    "group": "A inputs",
+    "name": "ultra-niche role",
+    "expected": "fewer than five, with a reason",
+    "passed": true,
+    "detail": "5 cards; warnings=['no hiring company given: Connection signal skipped']",
+    "seconds": 1.7
+  },
+  {
+    "group": "A inputs",
+    "name": "impossible combination",
+    "expected": "flags the contradiction, no blind search",
+    "passed": true,
+    "detail": "blocked: The brief contradicts itself: 10 years of experience at a 2-year-old company is impossible; 10 years of experience at a 2-year-old company is impossible",
+    "seconds": 1.6
+  },
+  {
+    "group": "A inputs",
+    "name": "unresolvable company",
+    "expected": "proceeds without Connection and says so",
+    "passed": true,
+    "detail": "cards=5 warnings=[\"hiring company 'Zzzzqx Nonexistent Technologies' could not be resolved: continuing without the Connection signal\"]",
+    "seconds": 1.6
+  },
+  {
+    "group": "A inputs",
+    "name": "prompt injection in brief",
+    "expected": "ignored; normal shortlist; no contact data",
+    "passed": true,
+    "detail": "injection_detected=True, cards=5, contact data in output: False",
+    "seconds": 2.9
+  },
+  {
+    "group": "A inputs",
+    "name": "empty / whitespace brief",
+    "expected": "clarifying question, no crash",
+    "passed": true,
+    "detail": "both blocked with a clarifying question",
+    "seconds": 1.7
+  },
+  {
+    "group": "A inputs",
+    "name": "50k-character brief",
+    "expected": "truncated, no crash",
+    "passed": true,
+    "detail": "sanitised to 4000 chars; spec='Backend Engineer'",
+    "seconds": 2.0
+  },
+  {
+    "group": "A inputs",
+    "name": "non-English brief (Hindi)",
+    "expected": "no crash",
+    "passed": true,
+    "detail": "handled without crash; title='' blocked=True",
+    "seconds": 1.4
+  },
+  {
+    "group": "A inputs",
+    "name": "PII in brief",
+    "expected": "redacted, never echoed",
+    "passed": true,
+    "detail": "assumptions=['2 contact detail(s) in the brief were redacted and ignored']",
+    "seconds": 0.0
+  },
+  {
+    "group": "A inputs",
+    "name": "remote role",
+    "expected": "proceeds without a city",
+    "passed": true,
+    "detail": "title='Backend Engineer' remote_ok=True",
+    "seconds": 0.0
+  },
+  {
+    "group": "A inputs",
+    "name": "unknown role",
+    "expected": "asks for the role",
+    "passed": true,
+    "detail": "blocked: Which role are you hiring for, and in which city?",
+    "seconds": 1.3
+  },
+  {
+    "group": "A inputs",
+    "name": "contradictory seniority",
+    "expected": "flags the contradiction",
+    "passed": true,
+    "detail": "contradictions=['Intern-level role asking for 12+ years of experience']",
+    "seconds": 0.0
+  },
+  {
+    "group": "A inputs",
+    "name": "markup / emoji / script tag",
+    "expected": "no crash",
+    "passed": true,
+    "detail": "title='Backend Engineer'",
+    "seconds": 2.4
+  },
+  {
+    "group": "B failures",
+    "name": "429 rate limit on ~1/3 calls",
+    "expected": "backoff + retry; run completes",
+    "passed": true,
+    "detail": "cards=5 injected 429s=5",
+    "seconds": 13.3
+  },
+  {
+    "group": "B failures",
+    "name": "timeout / 500 on ~1/5 calls",
+    "expected": "retry twice, continue with partial pool, flag it",
+    "passed": true,
+    "detail": "3 runs completed, injected 5xx=5, cards=[5, 5, 5], degradation notes=[]",
+    "seconds": 28.2
+  },
+  {
+    "group": "B failures",
+    "name": "forced empty search results",
+    "expected": "never crash; says no candidates",
+    "passed": true,
+    "detail": "cards=0 warnings=['no candidates passed the local filter', 'only 0 candidates matched; returning fewer than 5 instead of padding']",
+    "seconds": 7.7
+  },
+  {
+    "group": "B failures",
+    "name": "malformed LLM JSON on ~1/4 calls",
+    "expected": "repair once, else degrade; run completes",
+    "passed": true,
+    "detail": "cards=5 llm failures=2 injected=2",
+    "seconds": 8.4
+  },
+  {
+    "group": "B failures",
+    "name": "credit cap lowered to 50",
+    "expected": "stops cleanly with best-so-far + warning",
+    "passed": true,
+    "detail": "spent=50.0/50 cards=5 warning=['page truncated by credit cap']",
+    "seconds": 6.8
+  },
+  {
+    "group": "B failures",
+    "name": "402 credits exhausted",
+    "expected": "terminal: stops, warns, no crash",
+    "passed": true,
+    "detail": "cards=0 warnings=['credits exhausted (402): not enough credits', 'no candidates passed the local filter']",
+    "seconds": 2.9
+  },
+  {
+    "group": "B failures",
+    "name": "403 denied fields (skills)",
+    "expected": "narrow fields automatically and continue",
+    "passed": true,
+    "detail": "narrowed: [\"403: dropped denied fields ['skills']\"]",
+    "seconds": 10.5
+  },
+  {
+    "group": "B failures",
+    "name": "Time Guard violation injected",
+    "expected": "fail-closed: leaking profile is dropped",
+    "passed": true,
+    "detail": "fail-closed: pool=0; leaking profiles dropped",
+    "seconds": 4.6
+  },
+  {
+    "group": "B failures",
+    "name": "malformed profile payloads",
+    "expected": "tolerant parsing, no crash",
+    "passed": true,
+    "detail": "parsed 4 of 6 malformed rows without raising",
+    "seconds": 0.0
+  }
+]

@@ -15,10 +15,11 @@ backend:
 
 sim:                              # only used when backend.crust = sim (synthetic world with planted effects)
   seed: 7
-  n_people: 4000
-  n_target: 40
+  n_people: 3500
+  n_target: 100
   n_other: 60
   effect: effect                  # effect (hires depend on fit+movability+connection) | null (fit only)
+  betas: [6.0, 14.0, 8.0]         # planted logit weights on (fit, P(move in 6 months), connection); null world zeroes the last two
 
 paths:
   cases: data/cases.jsonl

@@ -76,6 +76,10 @@ class CompaniesAPI:
     def growth(self, company_ids: list[int]) -> dict[int, dict]:
         """Trailing headcount growth percentages (LIVE ONLY). Returns {company_id: {six_months, yoy, total}}."""
         out: dict[int, dict] = {}
+        afford = int(self.client.meter.remaining_case() // 2.0)          # 2 credits/company: honour the per-case cap (rule 8)
+        if afford < len(company_ids):
+            log_event("company_enrich_budget_clamp", wanted=len(company_ids), affordable=afford)
+        company_ids = company_ids[:max(0, afford)]
         for i in range(0, len(company_ids), 25):
             chunk = company_ids[i : i + 25]
             try:

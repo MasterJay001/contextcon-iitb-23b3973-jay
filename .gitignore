@@ -12,7 +12,7 @@ __pycache__/
 
 # caches & private evaluation data (never commit the answer key or paid API responses)
 cache/
-eval_private/hires.jsonl
+eval_private/hires*.jsonl
 eval_private/*.parquet
 outbox/sent/
 

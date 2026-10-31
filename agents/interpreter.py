@@ -34,6 +34,8 @@ _INJECTION = re.compile(
     r"system prompt|reveal (your|the) (prompt|instructions)|jailbreak|do anything now|you are now|pretend (to be|you are)|"
     r"list (all )?(their |the )?(emails?|phone|contact|numbers?)|(give|send|show|share|provide) (me )?(their |the )?(emails?|phone numbers?|contact (details|info))|"
     r"(email|phone) (addresses|numbers) of)", re.IGNORECASE)
+_DOMAINS = ["payments", "fintech", "lending", "banking", "logistics", "e-commerce", "ecommerce", "healthcare", "healthtech", "edtech",
+            "saas", "adtech", "gaming", "insurance", "crypto", "blockchain", "satellite", "aerospace", "automotive", "retail", "travel"]
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 _PHONE = re.compile(r"(?<!\d)(?:\+?\d[\d\s().-]{8,}\d)(?!\d)")
 _CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
@@ -88,8 +90,6 @@ def sanitize_brief(brief: str) -> tuple[str, bool, int]:
 _YEARS = re.compile(r"(\d+(?:\.\d+)?)\s*\+?\s*(?:-\s*\d+\s*)?(?:years?|yrs?|y)\b", re.IGNORECASE)
 _COMPANY = re.compile(r"(?:hiring (?:for|at)|company is|for|at|joining)\s+([A-Z][\w&.-]*(?:\s+[A-Z][\w&.-]*){0,3})")
 _YOUNG = re.compile(r"(\d+)\+?\s*(?:years?|yrs?)\s+(?:of\s+)?(?:\w+\s+){0,3}?(?:at|in|with)\s+(?:a|an)\s+(\d+)[-\s]*(?:years?|yrs?)[-\s]*old", re.IGNORECASE)
-_DOMAINS = ["payments", "fintech", "lending", "banking", "logistics", "e-commerce", "ecommerce", "healthcare", "healthtech", "edtech",
-            "saas", "adtech", "gaming", "insurance", "crypto", "blockchain", "satellite", "aerospace", "automotive", "retail", "travel"]
 _STAGE = {"startup": ["startup", "early stage", "early-stage", "seed", "series a", "founding", "0 to 1", "0-to-1"],
           "scaleup": ["scaleup", "scale-up", "series b", "series c", "hypergrowth"],
           "enterprise": ["enterprise", "large company", "mnc", "fortune"]}
@@ -106,14 +106,20 @@ def _vocab() -> list[str]:
     return sorted(w for w in words if len(w) >= 4)
 
 
+# Valid words must never be "corrected" into a look-alike ("intern" -> "internal").
+_PROTECTED = {"intern", "internship", "junior", "senior", "staff", "lead", "principal", "director", "manager", "years", "year", "experience",
+              "startup", "remote", "hybrid", "onsite", "hiring", "looking", "needs", "required", "preferred", "skills", "founding", "early", "stage"} | set(_DOMAINS)
+
+
 def _fuzzy_fix(text: str) -> str:
-    """Repair typos like 'bakend' -> 'backend' against the title vocabulary (edit-distance style, conservative)."""
+    """Repair typos like 'bakend' -> 'backend' against the title vocabulary (conservative: high similarity, protected words)."""
     vocab = _vocab()
+    known = set(vocab)
     out = []
     for tok in re.findall(r"[A-Za-z][A-Za-z+#.-]*|\S", text):
         low = tok.lower()
-        if len(low) >= 5 and low.isalpha() and low not in vocab:
-            m = difflib.get_close_matches(low, vocab, n=1, cutoff=0.84)
+        if len(low) >= 5 and low.isalpha() and low not in known and low not in _PROTECTED and not find_skills(low):
+            m = difflib.get_close_matches(low, vocab, n=1, cutoff=0.88)
             out.append(m[0] if m else tok)
         else:
             out.append(tok)

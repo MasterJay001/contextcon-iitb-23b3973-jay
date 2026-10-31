@@ -44,13 +44,16 @@ from rag.knowledge import KnowledgeBase
 
 
 @functools.lru_cache(maxsize=4)
-def _world(seed: int, n_people: int, n_target: int, n_other: int, effect: str) -> SimWorld:
-    return SimWorld(seed=seed, n_people=n_people, n_target=n_target, n_other=n_other, effect=effect)
+def _world(seed: int, n_people: int, n_target: int, n_other: int, effect: str, betas: tuple[float, float, float] | None) -> SimWorld:
+    return SimWorld(seed=seed, n_people=n_people, n_target=n_target, n_other=n_other, effect=effect, betas=betas)
 
 
 def sim_world_from_cfg(cfg: dict) -> SimWorld:
     s = cfg["sim"]
-    return _world(int(s["seed"]), int(s["n_people"]), int(s["n_target"]), int(s["n_other"]), str(s["effect"]))
+    betas = tuple(float(x) for x in s["betas"]) if s.get("betas") else None
+    if betas is not None and str(s["effect"]) == "null":
+        betas = (betas[0], 0.0, 0.0)
+    return _world(int(s["seed"]), int(s["n_people"]), int(s["n_target"]), int(s["n_other"]), str(s["effect"]), betas)
 
 
 @dataclass
@@ -120,6 +123,8 @@ def build_artifacts(case: Case, ctx: Context, *, rubric: str | None = None, extr
     cfg = ctx.cfg
     rubric = rubric if rubric is not None else rubric_text(cfg, load_lessons(cfg))
     T_eff = today(cfg) if leak_on else case.T
+    if ctx.crust.faults.active or (ctx.llm.faults is not None and ctx.llm.faults.active):
+        use_cache = False          # fault-injected runs must never read or poison the artifact cache
     key = artifact_key(case.case_id, case.T.isoformat(), case.brief, hashlib.sha256(rubric.encode()).hexdigest()[:10], cfg_fingerprint(cfg),
                        ctx.crust_backend, ctx.llm_backend, ctx.mode, strict_mask, leak_on, sorted(p.person_id for p in (extra_raw or [])),
                        cfg["sim"] if ctx.crust_backend == "sim" else "")
@@ -220,6 +225,8 @@ def build_artifacts(case: Case, ctx: Context, *, rubric: str | None = None, extr
             ids = sorted({m.employer_id_at_T for m in top_by_fit if m.employer_id_at_T is not None})
             if ids:
                 growth = ctx.companies.growth(ids)
+                if len(growth) < len(ids):
+                    warnings.append(f"employer headcount trend available for {len(growth)} of {len(ids)} employers (credit cap / enrichment failures)")
         for mp in pool:
             hg = growth.get(mp.employer_id_at_T) if mp.employer_id_at_T is not None else None
             art.move_feats[mp.person_id], art.move_diag[mp.person_id] = mov.features(mp, hg)
@@ -262,10 +269,10 @@ def interp_expand(location: str) -> list[str]:
 # ------------------------------------------------------------------------------- run
 def run_case(case: Case, ctx: Context, weights: Weights | None = None, *, rubric: str | None = None, variant: str = "A4",
              use_critic: bool = False, art: CaseArtifacts | None = None, extra_raw: list[RawProfile] | None = None,
-             learned=None, use_school: bool = False) -> tuple[CaseResult, CaseArtifacts, CriticResult | None]:
+             learned=None, use_school: bool = False, artifact_cache: bool = True) -> tuple[CaseResult, CaseArtifacts, CriticResult | None]:
     cfg = ctx.cfg
     weights = weights or Weights.from_cfg(cfg)
-    art = art or build_artifacts(case, ctx, rubric=rubric, extra_raw=extra_raw)
+    art = art or build_artifacts(case, ctx, rubric=rubric, extra_raw=extra_raw, use_cache=artifact_cache)
     ranked = rank(art, weights, variant, use_school=use_school, learned=learned)
     crit: CriticResult | None = None
     if use_critic and ranked:
@@ -294,7 +301,7 @@ def live_case(brief: str, cfg: dict, company: str | None = None) -> Case:
 
 
 def run_live(brief: str, ctx: Context, *, company: str | None = None, weights: Weights | None = None, assume: bool = False,
-             with_outreach: bool = True) -> LiveOutput:
+             with_outreach: bool = True, artifact_cache: bool = True) -> LiveOutput:
     """The customer-facing service: brief in -> five cards with sourced claims + drafted outreach queued for approval."""
     cfg = ctx.cfg
     t0 = time.time()
@@ -310,7 +317,7 @@ def run_live(brief: str, ctx: Context, *, company: str | None = None, weights: W
     case.target_seniority = spec.seniority
     case.location = spec.location or None
     case.company_name = company or spec.company_name
-    res, art, crit = run_case(case, ctx, weights, variant="A4", use_critic=True)
+    res, art, crit = run_case(case, ctx, weights, variant="A4", use_critic=True, artifact_cache=artifact_cache)
     k = int(cfg["live"]["k"])
     pool = {m.person_id: m for m in art.pool}
     shortlist = mmr_select(res.ranked, pool, k, float(cfg["live"]["mmr_lambda"]))

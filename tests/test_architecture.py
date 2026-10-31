@@ -77,7 +77,7 @@ def test_every_crustdata_request_goes_through_the_cached_client():
 
 def test_secrets_are_not_committed():
     gi = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert ".env" in gi and "cache/" in gi and "eval_private/hires.jsonl" in gi
+    assert ".env" in gi and "cache/" in gi and "eval_private/hires" in gi
     for p in ROOT.rglob("*.py"):
         if ".venv" in p.parts:
             continue

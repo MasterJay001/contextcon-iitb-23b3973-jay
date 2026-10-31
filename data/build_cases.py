@@ -26,7 +26,7 @@ import re
 import sys
 from pathlib import Path
 
-from core.config import ROOT, abs_path, load_config, today
+from core.config import ROOT, data_path, load_config, results_dir, today
 from core.events import log_event
 from core.geo import geo
 from core.models import Case, seniority_label
@@ -217,7 +217,7 @@ def build_route_b(ctx, args) -> tuple[list[Case], dict[str, list[dict]], dict]:
 
 
 def write_outputs(cfg: dict, cases: list[Case], hires: dict[str, list[dict]], funnel: dict, backends: dict) -> None:
-    cases_p, hires_p = abs_path(cfg, "cases"), abs_path(cfg, "hires")
+    cases_p, hires_p = data_path(cfg, "cases", backends["crust"]), data_path(cfg, "hires", backends["crust"])
     cases_p.parent.mkdir(parents=True, exist_ok=True)
     hires_p.parent.mkdir(parents=True, exist_ok=True)
     with open(cases_p, "w", encoding="utf-8") as fh:                       # NO hires in here
@@ -226,8 +226,7 @@ def write_outputs(cfg: dict, cases: list[Case], hires: dict[str, list[dict]], fu
     with open(hires_p, "w", encoding="utf-8") as fh:                       # the answer key
         for c in cases:
             fh.write(json.dumps({"case_id": c.case_id, "hires": hires[c.case_id]}) + "\n")
-    res_dir = ROOT / str(cfg["paths"]["results"])
-    res_dir.mkdir(parents=True, exist_ok=True)
+    res_dir = results_dir(cfg, backends["crust"], backends["llm"])
     funnel = {**funnel, "backends": backends, "n_train": sum(c.split == "train" for c in cases), "n_heldout": sum(c.split == "heldout" for c in cases),
               "multi_hire_cases": sum(len(hires[c.case_id]) > 1 for c in cases)}
     (res_dir / "case_funnel.json").write_text(json.dumps(funnel, indent=2, default=str), encoding="utf-8")
@@ -274,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     write_outputs(cfg, cases, hires, funnel, ctx.backends())
     print(json.dumps(funnel, indent=2, default=str))
     print(f"\nwrote {len(cases)} cases ({sum(c.split == 'train' for c in cases)} train / {sum(c.split == 'heldout' for c in cases)} held-out) "
-          f"-> {abs_path(cfg, 'cases')} ; answer key -> {abs_path(cfg, 'hires')}")
+          f"-> {data_path(cfg, 'cases', ctx.crust_backend)} ; answer key -> {data_path(cfg, 'hires', ctx.crust_backend)}")
     print("Next: hand-check results/case_quality_gate.md (Gate 2). Backends:", ctx.backends())
     ctx.close()
     return 0

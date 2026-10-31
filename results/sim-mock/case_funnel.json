@@ -1,0 +1,18 @@
+{
+  "postings_pulled": 100,
+  "size_50_5000": 100,
+  "family_known": 100,
+  "has_candidates": 74,
+  "verified_1_to_3": 67,
+  "universe_ok": 46,
+  "universe_too_large": 21,
+  "final_cases": 46,
+  "credits_spent_building": 25.6,
+  "backends": {
+    "crust": "sim",
+    "llm": "mock"
+  },
+  "n_train": 28,
+  "n_heldout": 18,
+  "multi_hire_cases": 12
+}
