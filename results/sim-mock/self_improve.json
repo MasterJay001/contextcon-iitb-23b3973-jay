@@ -1,0 +1,205 @@
+{
+  "history": [
+    {
+      "round": 0,
+      "state": {
+        "w_M": 0.5,
+        "w_C": 0.5,
+        "lessons": []
+      },
+      "train": {
+        "hits@25": 10,
+        "recall@25": 0.35714285714285715,
+        "mrr": 0.1042754706664523,
+        "n": 28
+      },
+      "heldout_shadow": {
+        "hits@25": 5,
+        "recall@25": 0.2777777777777778,
+        "mrr": 0.028309768595058078,
+        "n": 18
+      }
+    },
+    {
+      "round": 1,
+      "state": {
+        "w_M": 0.5,
+        "w_C": 1.0,
+        "lessons": []
+      },
+      "train": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "heldout_shadow": {
+        "hits@25": 7,
+        "recall@25": 0.3888888888888889,
+        "mrr": 0.056257366785399866,
+        "n": 18
+      }
+    },
+    {
+      "round": 2,
+      "state": {
+        "w_M": 0.5,
+        "w_C": 1.0,
+        "lessons": []
+      },
+      "train": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "heldout_shadow": {
+        "hits@25": 7,
+        "recall@25": 0.3888888888888889,
+        "mrr": 0.056257366785399866,
+        "n": 18
+      }
+    },
+    {
+      "round": 3,
+      "state": {
+        "w_M": 0.5,
+        "w_C": 1.0,
+        "lessons": []
+      },
+      "train": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "heldout_shadow": {
+        "hits@25": 7,
+        "recall@25": 0.3888888888888889,
+        "mrr": 0.056257366785399866,
+        "n": 18
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "round": 1,
+      "edit": {
+        "kind": "weight",
+        "text": "",
+        "param": "w_C",
+        "value": 1.0,
+        "reason": "missed hires sit high on connection signals (mean pool percentile 0.76)"
+      },
+      "lint": "ok",
+      "accepted": true,
+      "before": {
+        "hits@25": 10,
+        "recall@25": 0.35714285714285715,
+        "mrr": 0.1042754706664523,
+        "n": 28
+      },
+      "after": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "decision": "ACCEPTED"
+    },
+    {
+      "round": 1,
+      "edit": {
+        "kind": "rubric_sentence",
+        "text": "Candidates one role family away from the target (for example backend, full stack and platform engineering) are plausible hires; do not score them below 3 on title alone.",
+        "param": "",
+        "value": 0.0,
+        "reason": "missed hires look weak on literal title/fit (mean pool percentile 0.32) but were hired"
+      },
+      "lint": "ok",
+      "accepted": false,
+      "before": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "after": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "decision": "REVERTED"
+    },
+    {
+      "round": 2,
+      "edit": {
+        "kind": "rubric_sentence",
+        "text": "Candidates one role family away from the target (for example backend, full stack and platform engineering) are plausible hires; do not score them below 3 on title alone.",
+        "param": "",
+        "value": 0.0,
+        "reason": "missed hires look weak on literal title/fit (mean pool percentile 0.40) but were hired"
+      },
+      "lint": "ok",
+      "accepted": false,
+      "before": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "after": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "decision": "REVERTED"
+    },
+    {
+      "round": 3,
+      "edit": {
+        "kind": "rubric_sentence",
+        "text": "Candidates one role family away from the target (for example backend, full stack and platform engineering) are plausible hires; do not score them below 3 on title alone.",
+        "param": "",
+        "value": 0.0,
+        "reason": "missed hires look weak on literal title/fit (mean pool percentile 0.40) but were hired"
+      },
+      "lint": "ok",
+      "accepted": false,
+      "before": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "after": {
+        "hits@25": 11,
+        "recall@25": 0.39285714285714285,
+        "mrr": 0.12088530698760633,
+        "n": 28
+      },
+      "decision": "REVERTED"
+    }
+  ],
+  "final": {
+    "w_F": 1.0,
+    "w_M": 0.5,
+    "w_C": 1.0,
+    "lessons": [],
+    "train": {
+      "hits@25": 11,
+      "recall@25": 0.39285714285714285,
+      "mrr": 0.12088530698760633,
+      "n": 28
+    },
+    "config_hash_before": "f2791720c8e239d2",
+    "backends": {
+      "crust": "sim",
+      "llm": "mock"
+    },
+    "ts": "2026-10-31T14:19:55",
+    "strict_guard": true
+  }
+}

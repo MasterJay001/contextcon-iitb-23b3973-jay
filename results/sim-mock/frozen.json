@@ -1,0 +1,19 @@
+{
+  "w_F": 1.0,
+  "w_M": 0.5,
+  "w_C": 1.0,
+  "lessons": [],
+  "train": {
+    "hits@25": 11,
+    "recall@25": 0.39285714285714285,
+    "mrr": 0.12088530698760633,
+    "n": 28
+  },
+  "config_hash_before": "f2791720c8e239d2",
+  "backends": {
+    "crust": "sim",
+    "llm": "mock"
+  },
+  "ts": "2026-10-31T14:19:55",
+  "strict_guard": true
+}

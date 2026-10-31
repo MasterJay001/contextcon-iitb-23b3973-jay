@@ -1,0 +1,216 @@
+{
+  "backends": {
+    "crust": "sim",
+    "llm": "mock"
+  },
+  "split": "train",
+  "n_cases": 28,
+  "hires_in_pool": 29,
+  "share_hires_with_ex_colleague_at_company": 0.8620689655172413,
+  "share_non_hires_with_ex_colleague": 0.231311706629055,
+  "lift": 3.726871320437342,
+  "median_tenure_months_at_T_hires": 29.010266940451746,
+  "median_tenure_months_at_move_hires": 31.967145790554415,
+  "median_tenure_months_at_T_pool": 27.121149897330596,
+  "share_hires_between_roles_at_T": 0.0,
+  "share_hires_recently_promoted": 0.034482758620689655,
+  "hazard_peak_months_mean_over_cases": 19.41785714285714,
+  "median_tenure_at_exit_months_mean_over_cases": 27.48928571428571,
+  "top_feeders_by_case": {
+    "c001": {
+      "Orbwave Health": 2,
+      "Arkark Mart": 1,
+      "Arkkes Tech": 1,
+      "Keszen Cloud": 1,
+      "Novalum AI": 1
+    },
+    "c002": {
+      "Crestquil Cloud": 1,
+      "Dynorb Cloud": 1,
+      "Dynpay Works": 1,
+      "Dynvor Tech": 1,
+      "Fyncrest Mart": 1
+    },
+    "c003": {
+      "Arklum Health": 1,
+      "Dyngrid Tech": 1,
+      "Forgeforge Cloud": 1,
+      "Lumfyn Mart": 1,
+      "Lumgrid AI": 1
+    },
+    "c005": {
+      "Crestark Logic": 1,
+      "Dynforge Labs": 1,
+      "Gridtide AI": 1,
+      "Nimpulse Mart": 1,
+      "Paygrid Pay": 1
+    },
+    "c008": {
+      "Arkorb Health": 1,
+      "Arkwave Health": 1,
+      "Arkwave Logic": 1,
+      "Quilloop Tech": 1,
+      "Tidegrid Works": 1
+    },
+    "c009": {
+      "Dynvor Tech": 1,
+      "Lumcrest AI": 1,
+      "Lumtide Mart": 1,
+      "Nimpulse Mart": 1,
+      "Pulseforge Labs": 1
+    },
+    "c010": {
+      "Vorark Systems": 2,
+      "Arkkes Tech": 1,
+      "Crestquil Cloud": 1,
+      "Dynloop Pay": 1,
+      "Forgeark Works": 1
+    },
+    "c011": {
+      "Arkforge Health": 1,
+      "Crestorb Tech": 1,
+      "Lumcrest AI": 1,
+      "Orbpulse AI": 1,
+      "Quilorb Labs": 1
+    },
+    "c014": {
+      "Dynvor Pay": 2,
+      "Arknova Labs": 1,
+      "Arkwave Health": 1,
+      "Crestgrid Labs": 1,
+      "Gridtide AI": 1
+    },
+    "c015": {
+      "Crestark Logic": 1,
+      "Crestloop Pay": 1,
+      "Dynpay Works": 1,
+      "Forgeforge Cloud": 1,
+      "Fyncrest Mart": 1
+    },
+    "c019": {
+      "Quilcrest Cloud": 2,
+      "Stacknova Logic": 2,
+      "Arknova Labs": 1,
+      "Crestark Logic": 1,
+      "Crestloop Pay": 1
+    },
+    "c020": {
+      "Novalum Cloud": 2,
+      "Arkcrest Tech": 1,
+      "Arkwave Logic": 1,
+      "Fynmint Systems": 1,
+      "Gridorb Works": 1
+    },
+    "c022": {
+      "Dynmint Health": 1,
+      "Keszen Cloud": 1,
+      "Novapulse Systems": 1,
+      "Orbwave Health": 1,
+      "Wavestack AI": 1
+    },
+    "c023": {
+      "Arklum Health": 1,
+      "Lumcrest AI": 1,
+      "Nimzen Systems": 1,
+      "Novastack Logic": 1,
+      "Orbforge Cloud": 1
+    },
+    "c026": {
+      "Arkark Mart": 1,
+      "Dynmint Health": 1,
+      "Dynvor Tech": 1,
+      "Fyncrest Mart": 1,
+      "Kesfyn Pay": 1
+    },
+    "c028": {
+      "Crestloop Pay": 1,
+      "Dyngrid Tech": 1,
+      "Dynquil Mart": 1,
+      "Gridtide AI": 1,
+      "Mintkes Pay": 1
+    },
+    "c030": {
+      "Arkwave Logic": 1,
+      "Dynforge Logic": 1,
+      "Forgeforge Cloud": 1,
+      "Kesstack AI": 1,
+      "Mintlum Cloud": 1
+    },
+    "c031": {
+      "Dynloop Pay": 2,
+      "Crestark Logic": 1,
+      "Crestfyn Labs": 1,
+      "Crestloop Pay": 1,
+      "Gridtide AI": 1
+    },
+    "c032": {
+      "Arkcrest Tech": 1,
+      "Arkwave Logic": 1,
+      "Fynmint Systems": 1,
+      "Kesfyn Pay": 1,
+      "Mintwave Logic": 1
+    },
+    "c034": {
+      "Lumgrid Labs": 2,
+      "Zenforge Mart": 2,
+      "Kesark Logic": 1,
+      "Kesstack AI": 1,
+      "Lumloop Pay": 1
+    },
+    "c035": {
+      "Arkkes Tech": 1,
+      "Arknova Labs": 1,
+      "Crestark Logic": 1,
+      "Dynforge Logic": 1,
+      "Dynvor Tech": 1
+    },
+    "c036": {
+      "Arkwave Logic": 1,
+      "Crestloop Pay": 1,
+      "Crestpay Pay": 1,
+      "Dynvor Pay": 1,
+      "Kesforge Health": 1
+    },
+    "c037": {
+      "Fynwave Logic": 2,
+      "Gridark Cloud": 1,
+      "Loopnim Labs": 1,
+      "Mintwave Logic": 1,
+      "Nimpulse Pay": 1
+    },
+    "c038": {
+      "Crestfyn Labs": 1,
+      "Dynlum Pay": 1,
+      "Fyncrest Mart": 1,
+      "Gridpay Pay": 1,
+      "Kesark Logic": 1
+    },
+    "c039": {
+      "Gridtide AI": 1,
+      "Loopnim Labs": 1,
+      "Nimzen Systems": 1,
+      "Novapulse Systems": 1,
+      "Orbforge Systems": 1
+    },
+    "c040": {
+      "Fynfyn Works": 1,
+      "Lumtra Logic": 1,
+      "Quilorb Logic": 1,
+      "Vorark Systems": 1
+    },
+    "c041": {
+      "Arkcrest Tech": 2,
+      "Forgemint Tech": 1,
+      "Lumtra Logic": 1,
+      "Mintkes Pay": 1,
+      "Mintlum Labs": 1
+    },
+    "c043": {
+      "Novadyn Pay": 2,
+      "Arkcrest Tech": 1,
+      "Arkorb Health": 1,
+      "Dynforge Labs": 1,
+      "Dynorb Cloud": 1
+    }
+  }
+}
