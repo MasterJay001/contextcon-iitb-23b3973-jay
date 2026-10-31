@@ -6,6 +6,8 @@ import datetime as dt
 import hashlib
 import json
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -59,7 +61,7 @@ def _wrap(obj: Any) -> Any:
 def load_config(path: str | Path | None = None, overrides: dict | None = None) -> DotDict:
     """Load config.yaml, apply env backend overrides, then explicit `overrides` (nested dict)."""
     p = Path(path) if path else ROOT / "config.yaml"
-    with open(p, "r", encoding="utf-8") as fh:
+    with open(p, "r", encoding="utf-8-sig") as fh:
         raw = yaml.safe_load(fh) or {}
     env_crust = os.getenv("TTR_CRUST_BACKEND")
     env_llm = os.getenv("TTR_LLM_BACKEND")
@@ -99,14 +101,18 @@ def resolve_crust_backend(cfg: dict) -> str:
 
 
 def anthropic_credentials_available() -> bool:
-    """True if the SDK can resolve credentials (env key, auth token or an `ant auth login` profile)."""
+    """True if an env key/token is set or the `ant` CLI reports an active login profile.
+
+    (The SDK constructor does NOT raise without credentials, so constructing a client proves nothing.)"""
     if os.getenv("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_AUTH_TOKEN"):
         return True
-    try:  # profile-based credentials resolve inside the SDK constructor
-        import anthropic
-
-        anthropic.Anthropic()
-        return True
+    ant = shutil.which("ant")
+    if not ant:
+        return False
+    try:
+        r = subprocess.run([ant, "auth", "status"], capture_output=True, text=True, timeout=8)
+        out = (r.stdout + r.stderr).lower()
+        return r.returncode == 0 and "no active" not in out and "not logged" not in out and "no credential" not in out
     except Exception:
         return False
 

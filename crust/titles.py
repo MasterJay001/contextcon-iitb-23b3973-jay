@@ -122,7 +122,7 @@ class Taxonomy:
 
 @lru_cache(maxsize=1)
 def taxonomy() -> Taxonomy:
-    with open(_TAXO_PATH, "r", encoding="utf-8") as fh:
+    with open(_TAXO_PATH, "r", encoding="utf-8-sig") as fh:
         return Taxonomy(json.load(fh))
 
 

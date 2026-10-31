@@ -98,5 +98,5 @@ class Geo:
 
 @lru_cache(maxsize=1)
 def geo() -> Geo:
-    with open(ROOT / "knowledge" / "locations.json", "r", encoding="utf-8") as fh:
+    with open(ROOT / "knowledge" / "locations.json", "r", encoding="utf-8-sig") as fh:
         return Geo(json.load(fh))

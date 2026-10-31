@@ -13,6 +13,13 @@ backend:
   crust: auto               # auto | live | sim   (auto: live iff CRUSTDATA_API_KEY is set)
   llm: auto                 # auto | anthropic | mock (auto: anthropic iff a credential resolves)
 
+sim:                              # only used when backend.crust = sim (synthetic world with planted effects)
+  seed: 7
+  n_people: 4000
+  n_target: 40
+  n_other: 60
+  effect: effect                  # effect (hires depend on fit+movability+connection) | null (fit only)
+
 paths:
   cases: data/cases.jsonl
   hires: eval_private/hires.jsonl         # answer key. ONLY eval/ and data/build_cases.py may read it
@@ -40,8 +47,10 @@ crust:
   cache_ttl_hours:               # None-equivalent (very large) for backtests: reruns are free + identical
     backtest: 8760
     live: 6
-  credit_cap_run: 6000           # hard stop for one process (rule 8)
-  credit_cap_case: 160           # hard stop for one case
+  # Budget math (15,000 credits/builder; teams of up to 4 can pool keys): one case = pool (<= ~400 x 0.23 = 92)
+  # + roster (<= 300 x 0.23 = 69) + probes (~1) = ~160 credits -> 40 cases ~ 6,400. Reruns are free (cache).
+  credit_cap_run: 9000           # hard stop for one process (rule 8)
+  credit_cap_case: 200           # hard stop for one case
   credits_per_result:            # documented: base 0.03; experience+education group brings it to 0.23
     base: 0.03
     experience_education: 0.23
@@ -49,7 +58,7 @@ crust:
   people_fields:
     backtest: [crustdata_person_id, basic_profile.location, experience, education, skills]
     live: [crustdata_person_id, basic_profile, experience, education, skills, social_handles]
-    roster: [crustdata_person_id, experience, education]
+    roster: [crustdata_person_id, experience]      # + education only when connection.use_school_overlap is on
   company_filter_mode: id        # id | url   (probe auto-selects; client falls back automatically)
 
 # ---------------------------------------------------------------------------- LLM
@@ -111,7 +120,7 @@ sourcer:
     max_seniority_gap: 2         # retrieval is lenient; ranking does the fine work
     location_mode: soft          # soft: location only affects ranking | hard: drop non-matching
     require_title_family: true
-  max_universe_for_full_enumeration: 900
+  max_universe_for_full_enumeration: 500   # universes up to this size are enumerated completely (cases above are dropped/flagged)
 
 # ---------------------------------------------------------------------------- Features
 fit:
@@ -124,7 +133,9 @@ fit:
     llm_fit: 0.28
     text_sim: 0.08
   llm_top_n: 40                  # cheap feature filter 300 -> 40 before the LLM rubric
-  seniority_score: {same: 1.0, one_up: 0.85, one_below: 0.65, two_below: 0.25, two_up: 0.3, else: 0.0}
+  # d = target level - candidate level. Hires usually move sideways or ONE LEVEL UP, so a candidate one
+  # below the target (moves_up_1) is the sweet spot; one above (moves_down_1) is overqualified.
+  seniority_score: {same: 1.0, moves_up_1: 0.85, moves_down_1: 0.55, moves_up_2: 0.3, moves_down_2: 0.2, else: 0.0}
   rag:
     backend: auto                # auto | bm25 | dense  (dense = quantised ONNX via fastembed when installed)
     rrf_k: 60
@@ -147,7 +158,7 @@ movability:
     headcount: 0.00              # live-only (Company Enrichment has no as-of-T series); 0 in backtests
 
 connection:
-  roster_cap: 600
+  roster_cap: 300
   min_overlap_months: 3
   size_floor: 10
   ppr_damping: 0.85
