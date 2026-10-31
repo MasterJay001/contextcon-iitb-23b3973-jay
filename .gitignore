@@ -21,3 +21,4 @@ outbox/sent/
 .vscode/
 .DS_Store
 Thumbs.db
+outbox/queue.jsonl
