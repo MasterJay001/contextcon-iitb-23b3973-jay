@@ -1,0 +1,23 @@
+# secrets
+.env
+*.key
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+
+# caches & private evaluation data (never commit the answer key or paid API responses)
+cache/
+eval_private/hires.jsonl
+eval_private/*.parquet
+outbox/sent/
+
+# editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

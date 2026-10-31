@@ -1,0 +1,197 @@
+# =====================================================================================
+# Time-Travel Recruiter - single source of truth for every tunable.
+# Rule 7 (CLAUDE.md): `weights:` and `fit.inner_weights` are FROZEN before the held-out
+# run. `eval/run_ablations.py --split heldout --final` refuses to run if
+# `freeze.frozen` is false, and records a hash of this file next to the results.
+# =====================================================================================
+
+run:
+  seed: 7
+  now: null                 # override "today" (YYYY-MM-DD) - used by tests; null = real date
+
+backend:
+  crust: auto               # auto | live | sim   (auto: live iff CRUSTDATA_API_KEY is set)
+  llm: auto                 # auto | anthropic | mock (auto: anthropic iff a credential resolves)
+
+paths:
+  cases: data/cases.jsonl
+  hires: eval_private/hires.jsonl         # answer key. ONLY eval/ and data/build_cases.py may read it
+  cache: cache
+  results: results
+  lessons: lessons.md
+  knowledge: knowledge
+  outbox: outbox
+
+# ---------------------------------------------------------------------------- Crustdata
+crust:
+  base_url: https://api.crustdata.com
+  api_version: "2025-11-01"
+  timeout_s: 90
+  max_attempts: 4                # 429 / 5xx / timeout retries per request
+  backoff_base_s: 1.5
+  backoff_max_s: 30
+  rate_limit_per_min:            # documented defaults; check your dashboard
+    person_search: 30
+    job_search: 30
+    company_identify: 30
+    company_enrich: 15
+    autocomplete: 300
+    credits: 300
+  cache_ttl_hours:               # None-equivalent (very large) for backtests: reruns are free + identical
+    backtest: 8760
+    live: 6
+  credit_cap_run: 6000           # hard stop for one process (rule 8)
+  credit_cap_case: 160           # hard stop for one case
+  credits_per_result:            # documented: base 0.03; experience+education group brings it to 0.23
+    base: 0.03
+    experience_education: 0.23
+  page_size: 500                 # API allows 1..1000
+  people_fields:
+    backtest: [crustdata_person_id, basic_profile.location, experience, education, skills]
+    live: [crustdata_person_id, basic_profile, experience, education, skills, social_handles]
+    roster: [crustdata_person_id, experience, education]
+  company_filter_mode: id        # id | url   (probe auto-selects; client falls back automatically)
+
+# ---------------------------------------------------------------------------- LLM
+llm:
+  # claude-opus-5-5 is the default for every role (best quality). Cost knobs: swap `fit`
+  # (the high-volume role) to claude-sonnet-5-5 / claude-haiku-5-5 if you need to save money.
+  models:
+    interpreter: claude-opus-5-5
+    sourcer: claude-opus-5-5
+    fit: claude-opus-5-5
+    critic: claude-opus-5-5
+    outreach: claude-opus-5-5
+    analyst: claude-opus-5-5
+    ask: claude-opus-5-5
+  # NOTE: `temperature` is rejected (HTTP 400) on the Claude 5.x family, so determinism comes
+  # from the request-hash disk cache + structured outputs, not temperature 0 (see NOTES.md).
+  effort:
+    interpreter: low
+    sourcer: low
+    fit: medium
+    critic: high
+    outreach: medium
+    analyst: high
+    ask: medium
+  max_tokens:
+    interpreter: 8000
+    sourcer: 8000
+    fit: 16000
+    critic: 12000
+    outreach: 8000
+    analyst: 16000
+    ask: 8000
+  fallbacks: default             # server-side refusal fallback (beta header added by the client); off to disable
+  max_attempts: 3
+  fit_batch_size: 6              # candidates per fit call
+  fit_parallelism: 6
+  usd_per_mtok: {input: 4.0, output: 20.0, cache_read: 0.2, cache_write: 5.0}
+  cache_ttl_hours: 8760
+
+# ---------------------------------------------------------------------------- Time Guard
+mask:
+  ambiguity: conservative        # conservative: drop roles whose start straddles T. trust_reported: use as given
+  include_descriptions: true     # role free text (dated by role, but may have been edited later)
+  include_profile_skills: true   # undated -> flagged leaky; the robustness run removes it
+  include_profile_location: true # undated -> flagged leaky; location_at_T prefers the dated role location
+  scrub_target_mentions: true    # replace the hiring company's name in free text
+  infer_missing_end_from_next_start: true
+
+# ---------------------------------------------------------------------------- Sourcer
+sourcer:
+  policy: llm                    # llm (ReAct tool loop, heuristic fallback) | heuristic
+  pool_cap: 400                  # max masked+filtered candidates carried forward
+  pool_target: [200, 400]
+  max_steps: 4
+  fetch_cap_per_step: 500
+  min_gain_per_credit: 0.4       # budget-aware stop: marginal passing candidates per credit
+  sort_field: crustdata_person_id   # NEUTRAL order. Never sort by anything the hire influences
+  local_filter:
+    max_seniority_gap: 2         # retrieval is lenient; ranking does the fine work
+    location_mode: soft          # soft: location only affects ranking | hard: drop non-matching
+    require_title_family: true
+  max_universe_for_full_enumeration: 900
+
+# ---------------------------------------------------------------------------- Features
+fit:
+  inner_weights:
+    title_match: 0.22
+    seniority: 0.10
+    skills: 0.14
+    location: 0.10
+    domain: 0.08
+    llm_fit: 0.28
+    text_sim: 0.08
+  llm_top_n: 40                  # cheap feature filter 300 -> 40 before the LLM rubric
+  seniority_score: {same: 1.0, one_up: 0.85, one_below: 0.65, two_below: 0.25, two_up: 0.3, else: 0.0}
+  rag:
+    backend: auto                # auto | bm25 | dense  (dense = quantised ONNX via fastembed when installed)
+    rrf_k: 60
+
+movability:
+  horizon_days: 180
+  family: loglogistic            # loglogistic | weibull   (parametric, censored MLE) - KM always reported
+  frailty_alpha: 4.0             # gamma-frailty heterogeneity (higher = less person-level variation)
+  min_events_for_fit: 25         # below this, shrink to the prior (peak ~ prior_peak_months)
+  prior_peak_months: 27
+  prior_strength: 15             # pseudo-events behind the prior
+  merge_gap_months: 2            # consecutive roles at one employer within this gap = one spell
+  recent_promotion_months: 6
+  inner_weights:
+    p_move: 0.55
+    personal: 0.15
+    no_recent_promo: 0.10
+    stalled: 0.10
+    between_roles: 0.10
+    headcount: 0.00              # live-only (Company Enrichment has no as-of-T series); 0 in backtests
+
+connection:
+  roster_cap: 600
+  min_overlap_months: 3
+  size_floor: 10
+  ppr_damping: 0.85
+  ppr_iterations: 40
+  use_school_overlap: false      # riskiest signal for bias; reported with and without
+  inner_weights:
+    ex_colleague: 0.35
+    closeness: 0.35
+    feeder: 0.15
+    ppr: 0.15
+    school: 0.0
+
+# ---------------------------------------------------------------------------- Ranker / Critic / Live
+weights:                         # w_F is fixed at 1; w_M, w_C grid-searched on TRAIN only
+  w_F: 1.0
+  w_M: 0.5
+  w_C: 0.5
+  grid: [0.0, 0.25, 0.5, 1.0]
+
+freeze:
+  frozen: false                  # flip to true (and commit) before the one held-out run
+
+critic:
+  top_n: 20
+  demote_penalty: 0.35           # multiplicative score cut for demoted candidates
+
+live:
+  k: 5
+  mmr_lambda: 0.8                # relevance vs diversity trade-off for the final five
+  latency_budget_s: 180
+  min_score_to_show: 0.0
+
+outreach:
+  max_words: 90
+  placeholders: [CANDIDATE_FIRST_NAME, COLLEAGUE_NAME]
+  send_enabled: false            # rule 9: disabled by default; needs explicit approval + allowlist
+
+# ---------------------------------------------------------------------------- Evaluation
+eval:
+  k_values: [10, 25, 50]
+  bootstrap_n: 1000
+  seed: 11
+  hire_window_days: 180
+  seniority_tolerance: 1
+  min_cases_for_claims: 20
+  ranking_only_inject_hire: false   # fallback (doc sec.10): evaluate ranking with the hire injected; reported separately
+  holm_alpha: 0.05

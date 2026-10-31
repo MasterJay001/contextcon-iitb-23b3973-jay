@@ -1,0 +1,33 @@
+{
+  "_doc": "Metro clusters and aliases (India-centric plus global hubs). Used by core/geo.py for location matching, query expansion and as RAG context for the Brief Interpreter. A candidate in the same metro cluster is a local hire; the same state is regional; the same country is national.",
+  "metros": [
+    {"id": "blr", "canonical": "Bengaluru", "state": "Karnataka", "country": "India", "aliases": ["bengaluru", "bangalore", "bengaluru urban", "whitefield", "electronic city", "koramangala", "hsr layout", "indiranagar", "marathahalli", "bellandur", "bengaluru karnataka"]},
+    {"id": "mum", "canonical": "Mumbai", "state": "Maharashtra", "country": "India", "aliases": ["mumbai", "bombay", "navi mumbai", "thane", "mumbai metropolitan region", "mmr", "andheri", "bandra", "powai", "lower parel", "bkc", "vashi", "kalyan", "greater mumbai"]},
+    {"id": "pune", "canonical": "Pune", "state": "Maharashtra", "country": "India", "aliases": ["pune", "pimpri chinchwad", "pimpri-chinchwad", "hinjewadi", "kharadi", "baner", "wakad", "viman nagar"]},
+    {"id": "hyd", "canonical": "Hyderabad", "state": "Telangana", "country": "India", "aliases": ["hyderabad", "secunderabad", "hitec city", "gachibowli", "madhapur", "cyberabad"]},
+    {"id": "ncr", "canonical": "Delhi NCR", "state": "Delhi", "country": "India", "aliases": ["delhi", "new delhi", "gurgaon", "gurugram", "noida", "greater noida", "ghaziabad", "faridabad", "delhi ncr", "ncr", "national capital region"]},
+    {"id": "chn", "canonical": "Chennai", "state": "Tamil Nadu", "country": "India", "aliases": ["chennai", "madras", "sholinganallur", "guindy", "omr"]},
+    {"id": "kol", "canonical": "Kolkata", "state": "West Bengal", "country": "India", "aliases": ["kolkata", "calcutta", "salt lake", "howrah"]},
+    {"id": "ahd", "canonical": "Ahmedabad", "state": "Gujarat", "country": "India", "aliases": ["ahmedabad", "gandhinagar", "gift city"]},
+    {"id": "jai", "canonical": "Jaipur", "state": "Rajasthan", "country": "India", "aliases": ["jaipur"]},
+    {"id": "koc", "canonical": "Kochi", "state": "Kerala", "country": "India", "aliases": ["kochi", "cochin", "ernakulam", "trivandrum", "thiruvananthapuram", "technopark"]},
+    {"id": "sfo", "canonical": "San Francisco Bay Area", "state": "California", "country": "United States", "aliases": ["san francisco", "bay area", "san francisco bay area", "palo alto", "mountain view", "menlo park", "sunnyvale", "san jose", "oakland", "santa clara", "redwood city"]},
+    {"id": "nyc", "canonical": "New York", "state": "New York", "country": "United States", "aliases": ["new york", "new york city", "nyc", "brooklyn", "manhattan", "jersey city"]},
+    {"id": "sea", "canonical": "Seattle", "state": "Washington", "country": "United States", "aliases": ["seattle", "bellevue", "redmond"]},
+    {"id": "lon", "canonical": "London", "state": "England", "country": "United Kingdom", "aliases": ["london", "greater london"]},
+    {"id": "sin", "canonical": "Singapore", "state": "Singapore", "country": "Singapore", "aliases": ["singapore"]},
+    {"id": "dxb", "canonical": "Dubai", "state": "Dubai", "country": "United Arab Emirates", "aliases": ["dubai", "abu dhabi", "uae"]},
+    {"id": "ber", "canonical": "Berlin", "state": "Berlin", "country": "Germany", "aliases": ["berlin", "munich", "hamburg"]},
+    {"id": "tor", "canonical": "Toronto", "state": "Ontario", "country": "Canada", "aliases": ["toronto", "greater toronto area", "gta", "mississauga"]}
+  ],
+  "countries": {
+    "india": ["india", "bharat", "ind", "in"],
+    "united states": ["united states", "usa", "us", "u.s.", "america"],
+    "united kingdom": ["united kingdom", "uk", "england", "great britain"],
+    "singapore": ["singapore", "sg"],
+    "united arab emirates": ["united arab emirates", "uae", "dubai"],
+    "germany": ["germany", "deutschland"],
+    "canada": ["canada"]
+  },
+  "remote_markers": ["remote", "work from home", "wfh", "anywhere", "distributed", "hybrid or remote", "fully remote"]
+}
